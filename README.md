@@ -1,36 +1,82 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ServiceBot AI - Customer Service Assistant
+
+A portfolio project showcasing an AI-powered customer service chatbot built with Next.js and LangGraph SDK. This RAG (Retrieval-Augmented Generation) agent provides instant, accurate responses by searching through a company's knowledge base.
+
+## 🎯 Project Overview
+
+This is a demonstration of a modern AI customer service solution that:
+- Answers customer inquiries using company documentation
+- Provides 24/7 automated support
+- Retrieves accurate information from uploaded knowledge base documents
+- Streams real-time responses for a natural chat experience
+
+## Features
+
+- 🤖 **AI Chat Interface**: Natural conversation with streaming responses
+- 🔐 **User Authentication**: Login and registration system
+- 📄 **Knowledge Base Management**: Admin portal for uploading support documents
+- 🔄 **Real-time Streaming**: Instant responses via LangGraph SDK
+- 🎨 **Modern UI**: Dark theme with responsive design
+
+## Routes
+
+| Route | Description | Access |
+|-------|-------------|--------|
+| `/` | Landing page | Public |
+| `/chat` | Chat with the RAG agent | Public |
+| `/login` | Login page | Public |
+| `/register` | Registration page | Public |
+| `/admin/documents` | Document upload management | Admin only |
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 18+
+- A Python backend with LangGraph agent running
+
+### Installation
+
+```bash
+npm install
+```
+
+### Configuration
+
+Create a `.env.local` file with:
+
+```env
+NEXT_PUBLIC_LANGGRAPH_API_URL=http://localhost:8000
+NEXT_PUBLIC_API_URL=http://localhost:8000
+```
+
+### Development
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Backend API Requirements
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Your Python backend should implement these endpoints:
 
-## Learn More
+### Authentication
+- `POST /auth/login` - Login with email/password
+- `POST /auth/register` - Register new user
 
-To learn more about Next.js, take a look at the following resources:
+### Documents (Admin)
+- `GET /documents` - List all documents
+- `POST /documents/upload` - Upload a document
+- `DELETE /documents/:id` - Delete a document
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### LangGraph
+The frontend uses the LangGraph SDK to communicate with your agent. Make sure your backend exposes the LangGraph API.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Tech Stack
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Next.js 16** - React framework
+- **TypeScript** - Type safety
+- **Tailwind CSS** - Styling
+- **LangGraph SDK** - Agent communication
