@@ -16,7 +16,7 @@ export default function RegisterPage() {
   const { register } = useAuth();
   const router = useRouter();
 
-  const handleSubmit = async (e: React.SubmitEvent) => {
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
 
@@ -32,15 +32,18 @@ export default function RegisterPage() {
 
     setIsLoading(true);
 
-    const result = await register(email, password);
-    
-    if (result.success) {
+    try {
+      await register({ email, password });
       router.push("/login");
-    } else {
-      setError(result.error || "Registration failed. Please try again.");
+    } catch (error) {
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError("Registration failed. Please try again.");
+      }
+    } finally {
+      setIsLoading(false);
     }
-    
-    setIsLoading(false);
   };
 
   return (

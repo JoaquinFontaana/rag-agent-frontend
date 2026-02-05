@@ -15,20 +15,23 @@ export default function LoginPage() {
   const { login } = useAuth();
   const router = useRouter();
 
-  const handleSubmit = async (e: React.SubmitEvent) => {
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
     setIsLoading(true);
 
-    const result = await login(email, password);
-    
-    if (result.success) {
+    try {
+      await login({ email, password });
       router.push("/chat");
-    } else {
-      setError(result.error || "Login failed. Please try again.");
+    } catch (error) {
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError("Login failed. Please try again.");
+      }
+    } finally {
+      setIsLoading(false);
     }
-    
-    setIsLoading(false);
   };
 
   return (

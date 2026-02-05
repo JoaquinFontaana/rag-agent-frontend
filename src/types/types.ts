@@ -28,3 +28,37 @@ export interface MessageChunk {
 export interface ContentPart {
   text?: string;
 }
+
+export interface LoginCredentials{
+  email:string
+  password:string
+}
+export interface RegisterCredentials{
+    email:string
+   password:string
+}
+
+export interface ApiResponse {
+  message: string
+}
+
+export interface LoginResponse {
+  access_token: string
+}
+
+export interface BackendError {
+  success: false
+  error: {
+    type: string
+    message: string
+    details?: string[]
+  }
+}
+
+export interface JWTPayload {
+  sub: string       // user id
+  email: string
+  role: "admin" | "user"
+  exp: number       // expiration
+  iat: number       // issued at
+}

@@ -1,10 +1,13 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { chatService } from "@/services/chatService";
+import { useAuth } from "@/context/AuthContext";
 import type { Message } from "@/types/types";
 import ChatMessages from "@/components/chat/ChatMessages";
 import ChatInput from "@/components/chat/ChatInput";
+import ChatSidebar from "@/components/chat/ChatSidebar";
 
 export default function ChatPage() {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -12,6 +15,15 @@ export default function ChatPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [threadId, setThreadId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const { user, isLoading: authLoading } = useAuth();
+  const router = useRouter();
+
+  // Redirect if not authenticated
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push("/login");
+    }
+  }, [user, authLoading, router]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -23,15 +35,17 @@ export default function ChatPage() {
 
   useEffect(() => {
     const initThread = async () => {
+      if (!user) return;
+      
       try {
-        const newThreadId = await chatService.createThread();
+        const newThreadId = await chatService.createThread(user.id.toString());
         setThreadId(newThreadId);
       } catch (error) {
         console.error("Error creating thread:", error);
       }
     };
     initThread();
-  }, []);
+  }, [user]);
 
   const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault();
@@ -77,8 +91,10 @@ export default function ChatPage() {
   };
 
   const startNewChat = async () => {
+    if (!user) return;
+    
     try {
-      const newThreadId = await chatService.createThread();
+      const newThreadId = await chatService.createThread(user.id.toString());
       setThreadId(newThreadId);
       setMessages([]);
     } catch (error) {
@@ -86,20 +102,66 @@ export default function ChatPage() {
     }
   };
 
+  const handleThreadSelect = async (selectedThreadId: string) => {
+    try {
+      setThreadId(selectedThreadId);
+      setMessages([]);
+      setIsLoading(true);
+
+      // Load thread messages
+      const threadMessages = await chatService.getThreadMessages(selectedThreadId);
+      
+      // Convert to Message format
+      const formattedMessages: Message[] = threadMessages.map((msg: any, idx: number) => ({
+        id: `${selectedThreadId}-${idx}`,
+        role: msg.type === "human" ? "user" : "assistant",
+        content: typeof msg.content === "string" ? msg.content : msg.content?.[0]?.text || "",
+      }));
+
+      setMessages(formattedMessages);
+    } catch (error) {
+      console.error("Error loading thread:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Show loading while checking auth
+  if (authLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <p className="text-white">Loading...</p>
+      </div>
+    );
+  }
+
+  // Don't render if not authenticated
+  if (!user) {
+    return null;
+  }
+
   return (
-    <div className="flex flex-col h-[calc(100vh-4rem)]">
-      <ChatMessages
-        messages={messages}
-        isLoading={isLoading}
-        messagesEndRef={messagesEndRef}
-      />
-      <ChatInput
-        input={input}
-        isLoading={isLoading}
-        onInputChange={setInput}
-        onSubmit={handleSubmit}
+    <div className="flex h-[calc(100vh-4rem)]">
+      <ChatSidebar
+        userId={user.id.toString()}
+        currentThreadId={threadId}
+        onThreadSelect={handleThreadSelect}
         onNewChat={startNewChat}
       />
+      <div className="flex flex-col flex-1">
+        <ChatMessages
+          messages={messages}
+          isLoading={isLoading}
+          messagesEndRef={messagesEndRef}
+        />
+        <ChatInput
+          input={input}
+          isLoading={isLoading}
+          onInputChange={setInput}
+          onSubmit={handleSubmit}
+          onNewChat={startNewChat}
+        />
+      </div>
     </div>
   );
 }
