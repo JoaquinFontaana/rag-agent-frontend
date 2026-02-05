@@ -1,4 +1,4 @@
-import type { Message } from "@/services/chatService";
+import type { Message } from "@/types/types";
 
 interface ChatMessageProps {
   readonly message: Message;

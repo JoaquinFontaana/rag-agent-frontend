@@ -32,12 +32,12 @@ export default function RegisterPage() {
 
     setIsLoading(true);
 
-    const success = await register(email, password);
+    const result = await register(email, password);
     
-    if (success) {
+    if (result.success) {
       router.push("/login");
     } else {
-      setError("Registration failed. Email may already be in use.");
+      setError(result.error || "Registration failed. Please try again.");
     }
     
     setIsLoading(false);

@@ -1,4 +1,4 @@
-import type { Message } from "@/services/chatService";
+import type { Message } from "@/types/types";
 import ChatMessage from "./ChatMessage";
 import EmptyChat from "./EmptyChat";
 

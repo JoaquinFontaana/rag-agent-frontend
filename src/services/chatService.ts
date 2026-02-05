@@ -1,27 +1,10 @@
 import { Client } from "@langchain/langgraph-sdk";
-
-const LANGGRAPH_API_URL = process.env.NEXT_PUBLIC_LANGGRAPH_API_URL || "http://localhost:8000";
-
-export interface Message {
-  id: string;
-  role: "user" | "assistant";
-  content: string;
+import {
+  MessageChunk,
+  ContentPart
 }
-
-export interface StreamChunk {
-  event: string;
-  data: MessageChunk[];
-}
-
-export interface MessageChunk {
-  type: string;
-  content: string | ContentPart[];
-}
-
-export interface ContentPart {
-  text?: string;
-}
-
+from "@/types/types"
+import {LANGGRAPH_API_URL} from "@/consts"
 class ChatService {
   private readonly client: Client;
 

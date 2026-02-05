@@ -20,12 +20,12 @@ export default function LoginPage() {
     setError("");
     setIsLoading(true);
 
-    const success = await login(email, password);
+    const result = await login(email, password);
     
-    if (success) {
+    if (result.success) {
       router.push("/chat");
     } else {
-      setError("Invalid email or password");
+      setError(result.error || "Login failed. Please try again.");
     }
     
     setIsLoading(false);

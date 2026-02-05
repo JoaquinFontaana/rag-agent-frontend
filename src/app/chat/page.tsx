@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { chatService } from "@/services/chatService";
-import type { Message } from "@/services/chatService";
+import type { Message } from "@/types/types";
 import ChatMessages from "@/components/chat/ChatMessages";
 import ChatInput from "@/components/chat/ChatInput";
 
