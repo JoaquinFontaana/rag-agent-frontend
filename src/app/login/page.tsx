@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
+import Input from "@/components/ui/Input";
+import Button from "@/components/ui/Button";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -13,7 +15,7 @@ export default function LoginPage() {
   const { login } = useAuth();
   const router = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault();
     setError("");
     setIsLoading(true);
@@ -39,39 +41,23 @@ export default function LoginPage() {
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-6">
           <div className="space-y-4">
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-300">
-                Email address
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="mt-1 block w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="you@example.com"
-              />
-            </div>
+            <Input
+              label="Email address"
+              type="email"
+              placeholder="you@example.com"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
 
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-300">
-                Password
-              </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="mt-1 block w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="••••••••"
-              />
-            </div>
+            <Input
+              label="Password"
+              type="password"
+              placeholder="••••••••"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
           </div>
 
           {error && (
@@ -80,13 +66,13 @@ export default function LoginPage() {
             </div>
           )}
 
-          <button
+          <Button
             type="submit"
             disabled={isLoading}
-            className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="w-full"
           >
             {isLoading ? "Signing in..." : "Sign in"}
-          </button>
+          </Button>
 
           <p className="text-center text-gray-400 text-sm">
             Don&apos;t have an account?{" "}

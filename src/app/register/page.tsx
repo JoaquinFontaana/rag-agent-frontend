@@ -4,9 +4,10 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
+import Input from "@/components/ui/Input";
+import Button from "@/components/ui/Button";
 
 export default function RegisterPage() {
-  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -15,7 +16,7 @@ export default function RegisterPage() {
   const { register } = useAuth();
   const router = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault();
     setError("");
 
@@ -31,10 +32,10 @@ export default function RegisterPage() {
 
     setIsLoading(true);
 
-    const success = await register(email, password, name);
+    const success = await register(email, password);
     
     if (success) {
-      router.push("/chat");
+      router.push("/login");
     } else {
       setError("Registration failed. Email may already be in use.");
     }
@@ -52,73 +53,32 @@ export default function RegisterPage() {
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-6">
           <div className="space-y-4">
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-300">
-                Full name
-              </label>
-              <input
-                id="name"
-                name="name"
-                type="text"
-                autoComplete="name"
-                required
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="mt-1 block w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="John Doe"
-              />
-            </div>
+            <Input
+              label="Email address"
+              type="email"
+              placeholder="you@example.com"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
 
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-300">
-                Email address
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="mt-1 block w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="you@example.com"
-              />
-            </div>
+            <Input
+              label="Password"
+              type="password"
+              placeholder="••••••••"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
 
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-300">
-                Password
-              </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="new-password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="mt-1 block w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="••••••••"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-300">
-                Confirm password
-              </label>
-              <input
-                id="confirmPassword"
-                name="confirmPassword"
-                type="password"
-                autoComplete="new-password"
-                required
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                className="mt-1 block w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="••••••••"
-              />
-            </div>
+            <Input
+              label="Confirm password"
+              type="password"
+              placeholder="••••••••"
+              required
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
           </div>
 
           {error && (
@@ -127,13 +87,13 @@ export default function RegisterPage() {
             </div>
           )}
 
-          <button
+          <Button
             type="submit"
             disabled={isLoading}
-            className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="w-full"
           >
             {isLoading ? "Creating account..." : "Create account"}
-          </button>
+          </Button>
 
           <p className="text-center text-gray-400 text-sm">
             Already have an account?{" "}

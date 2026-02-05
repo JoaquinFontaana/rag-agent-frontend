@@ -1,13 +1,13 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, ReactNode, useMemo } from "react";
+import { createContext, useContext, useState, ReactNode, useMemo } from "react";
 import { authService, User } from "@/services/authService";
 
 interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<boolean>;
-  register: (email: string, password: string, name: string) => Promise<boolean>;
+  register: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
   isAdmin: boolean;
 }
@@ -25,21 +25,16 @@ export function AuthProvider({ children }: Readonly<{ children: ReactNode }>) {
   const [isLoading, setIsLoading] = useState(false);
 
   const login = async (email: string, password: string): Promise<boolean> => {
-    const response = await authService.login({ email, password });
-    if (response) {
-      setUser(response.user);
+    const user = await authService.login({ email, password });
+    if (user) {
+      setUser(user);
       return true;
     }
     return false;
   };
 
-  const register = async (email: string, password: string, name: string): Promise<boolean> => {
-    const response = await authService.register({ email, password, name });
-    if (response) {
-      setUser(response.user);
-      return true;
-    }
-    return false;
+  const register = async (email: string, password: string): Promise<boolean> => {
+    return await authService.register({ email, password });
   };
 
   const logout = () => {
