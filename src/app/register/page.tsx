@@ -19,7 +19,6 @@ export default function RegisterPage() {
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
-
     if (password !== confirmPassword) {
       setError("Passwords do not match");
       return;
@@ -27,6 +26,12 @@ export default function RegisterPage() {
 
     if (password.length < 6) {
       setError("Password must be at least 6 characters");
+      return;
+    }
+
+    // Bcrypt has a 72 byte limit
+    if (new Blob([password]).size > 72) {
+      setError("Password is too long (max 72 bytes)");
       return;
     }
 

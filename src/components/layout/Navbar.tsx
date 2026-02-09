@@ -27,11 +27,11 @@ export default function Navbar() {
               >
                 Chat
               </Link>
-              {isAdmin && (
+              {user && (
                 <Link
-                  href="/admin/documents"
+                  href="/documents"
                   className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                    pathname === "/admin/documents"
+                    pathname === "/documents"
                       ? "bg-gray-800 text-white"
                       : "text-gray-300 hover:bg-gray-700 hover:text-white"
                   }`}

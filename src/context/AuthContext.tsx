@@ -1,5 +1,6 @@
+'use client'
 import { LoginCredentials, RegisterCredentials, User, JWTPayload } from "@/types/types";
-import { createContext, useState, useContext, ReactNode, useEffect } from "react";
+import { createContext, useState, useContext, ReactNode, useEffect, useMemo } from "react";
 import { authService } from "@/services/authService";
 import { jwtDecode } from "jwt-decode";
 
@@ -15,7 +16,7 @@ interface AuthContextType {
 export const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 // Provider Component
-export function AuthProvider({ children }: { children: ReactNode }) {
+export function AuthProvider({ children }: { readonly children: ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
@@ -53,6 +54,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             
             setUser(userData);
         } catch (error) {
+            console.error('Login error:', error);
             throw error; // Re-throw to component
         } finally {
             setIsLoading(false);
@@ -69,20 +71,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             setIsLoading(true);
             await authService.register(data);
         } catch (error) {
+            console.error('Register error:', error);
             throw error; // Re-throw to component
         } finally {
             setIsLoading(false);
         }
     };
 
-    const value = {
+    const value = useMemo(() => ({
         user,
         login,
         register,
         logout,
         isAuthenticated: !!user,
         isLoading
-    };
+    }), [user, isLoading]);
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

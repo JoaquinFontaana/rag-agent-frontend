@@ -62,3 +62,51 @@ export interface JWTPayload {
   exp: number       // expiration
   iat: number       // issued at
 }
+
+// Document types
+export interface Document {
+  document_id: string
+  filename: string
+  uploaded_at: string
+  total_chunks: number
+}
+
+export interface DocumentChunk {
+  id: string
+  content: string
+  metadata: {
+    document_id: string
+    filename: string
+    chunk_index: number
+    total_chunks: number
+    uploaded_at: string
+  }
+}
+
+export interface UploadDocumentResponse {
+  message: string
+  document_id: string
+}
+
+export interface ListDocumentsResponse {
+  documents: Document[]
+}
+
+export interface DocumentChunksResponse {
+  chunks: DocumentChunk[]
+}
+
+// Thread types
+export interface Thread {
+  thread_id: string
+  created_at: string
+  updated_at?: string
+  title?: string
+  metadata?: {
+    userId: string
+    title?: string
+    createdAt: string
+    updatedAt?: string
+  }
+  values?: any
+}

@@ -18,6 +18,13 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
+
+    // Bcrypt has a 72 byte limit
+    if (new Blob([password]).size > 72) {
+      setError("Password is too long (max 72 bytes)");
+      return;
+    }
+
     setIsLoading(true);
 
     try {
