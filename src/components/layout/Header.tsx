@@ -4,6 +4,7 @@ import { useAuth } from "@/context/AuthContext"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import Button from "../ui/Button"
 export default function Header() {
     const { user, logout } = useAuth()
     const router = useRouter()
@@ -35,15 +36,28 @@ export default function Header() {
                 {/* Center: Navigation Links */}
                 <nav className="flex items-center justify-center space-x-6">
                     {user && (
-                        <Link
-                            href="/chat"
-                            className={`text-sm font-medium transition-colors ${pathname === "/chat"
-                                ? "text-blue-400"
-                                : "text-gray-400 hover:text-white"
-                                }`}
-                        >
-                            Chat
-                        </Link>
+                        <>
+                            <Link
+                                href="/chat"
+                                className={`text-sm font-medium transition-colors ${pathname === "/chat"
+                                    ? "text-blue-400"
+                                    : "text-gray-400 hover:text-white"
+                                    }`}
+                            >
+                                Chat
+                            </Link>
+                            {user.role === "admin" && (
+                                <Link
+                                    href="/documents"
+                                    className={`text-sm font-medium transition-colors ${pathname === "/documents"
+                                        ? "text-blue-400"
+                                        : "text-gray-400 hover:text-white"
+                                        }`}
+                                >
+                                    Documents
+                                </Link>
+                            )}
+                        </>
                     )}
                 </nav>
 
@@ -51,20 +65,22 @@ export default function Header() {
                 <div className="flex-1 flex justify-end">
                     {user ? (
                         <div className="flex items-center space-x-4">
-                            <button
+                            <Button
                                 onClick={handleLogout}
-                                className="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white text-sm rounded-lg transition-colors border border-gray-700"
+                                variant="danger"
+                                className="px-4 py-2"
                             >
                                 Logout
-                            </button>
+                            </Button>
                         </div>
                     ) : (
-                        <button
+                        <Button
                             onClick={() => router.push("/login")}
-                            className="px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white text-sm rounded-lg transition-all shadow-lg shadow-blue-500/20"
+                            variant="primary"
+                            className="px-4 py-2"
                         >
                             Login
-                        </button>
+                        </Button>
                     )}
                 </div>
             </div>

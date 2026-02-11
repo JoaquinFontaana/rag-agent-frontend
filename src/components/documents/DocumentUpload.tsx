@@ -84,7 +84,7 @@ export default function DocumentUpload({ onUploadSuccess }: DocumentUploadProps)
         <input
           ref={fileInputRef}
           type="file"
-          accept=".pdf,.txt"
+          accept=".pdf,.txt,.md"
           onChange={handleFileSelect}
           className="hidden"
         />
@@ -98,7 +98,7 @@ export default function DocumentUpload({ onUploadSuccess }: DocumentUploadProps)
                 Drop a file here or click to browse
               </p>
               <p className="text-sm text-gray-400">
-                Supports PDF and TXT files
+                Supports PDF, TXT and MD files
               </p>
             </>
           )}
@@ -106,7 +106,7 @@ export default function DocumentUpload({ onUploadSuccess }: DocumentUploadProps)
       </button>
 
       {error && (
-        <div className="mt-4 p-3 bg-red-900/20 border border-red-500/50 rounded-lg">
+        <div className="mt-4 p-3 bg-red-900/20 border border-red-500/50 rounded-lg text-center">
           <p className="text-sm text-red-400">{error}</p>
         </div>
       )}

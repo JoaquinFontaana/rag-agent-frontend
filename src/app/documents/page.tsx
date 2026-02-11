@@ -12,6 +12,9 @@ export default function DocumentsPage() {
   useEffect(() => {
     if (!isLoading && !user) {
       router.push("/login")
+    } else if (!isLoading && user && user.role !== "admin") {
+      // Redirect non-admin users to chat
+      router.push("/chat")
     }
   }, [user, isLoading, router])
 
@@ -23,7 +26,7 @@ export default function DocumentsPage() {
     )
   }
 
-  if (!user) {
+  if (!user || user.role !== "admin") {
     return null
   }
 

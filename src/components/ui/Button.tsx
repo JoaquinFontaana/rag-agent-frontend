@@ -20,12 +20,12 @@ export default function Button({
   className = "",
   ...props
 }: ButtonProps) {
-  const baseStyles = "rounded-lg transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-950 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2";
+  const baseStyles = "rounded-lg transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-950 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2 tracking-wide";
 
   const variantStyles = {
-    primary: "bg-blue-600 hover:bg-blue-700 disabled:bg-gray-700 text-white shadow-lg shadow-blue-500/20 disabled:shadow-none focus:ring-blue-500",
+    primary: "bg-blue-600 hover:bg-blue-700 disabled:bg-gray-700 text-white shadow-md shadow-blue-600/20 disabled:shadow-none focus:ring-blue-500",
     secondary: "border border-gray-700 text-white bg-gray-800 hover:bg-gray-700 focus:ring-gray-500",
-    danger: "bg-red-600 hover:bg-red-700 text-white shadow-lg shadow-red-500/30 hover:shadow-red-500/50 focus:ring-red-500",
+    danger: "bg-red-600 hover:bg-red-700 text-white shadow-md shadow-red-500/20 hover:shadow-red-500/30 focus:ring-red-500",
     ghost: "text-gray-400 hover:text-white hover:bg-gray-800 focus:ring-gray-500",
     gradient: "bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-lg shadow-blue-500/30 focus:ring-blue-500",
     icon: "bg-transparent hover:bg-gray-800 text-gray-400 hover:text-white focus:ring-gray-600"

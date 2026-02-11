@@ -4,6 +4,7 @@ import { useState } from "react"
 import type { Document, DocumentChunk } from "@/types/types"
 import { documentService } from "@/services/documentService"
 import ConfirmModal from "../ui/ConfirmModal"
+import Button from "../ui/Button"
 
 interface DocumentItemProps {
   readonly document: Document
@@ -75,23 +76,25 @@ export default function DocumentItem({ document, onDelete }: DocumentItemProps) 
         </div>
 
         <div className="flex gap-2">
-          <button
+          <Button
+            variant="primary"
+            size="md"
             onClick={handleViewChunks}
             disabled={isLoadingChunks}
-            className="px-3 py-1 text-sm bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white rounded transition-all disabled:opacity-50 shadow-md shadow-blue-500/20"
           >
             {(() => {
               if (isLoadingChunks) return "...";
               return showChunks ? "Hide" : "View";
             })()}
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="danger"
+            size="md"
             onClick={handleDeleteClick}
             disabled={isDeleting}
-            className="px-3 py-1 text-sm bg-red-600 hover:bg-red-500 text-white rounded transition-all disabled:opacity-50 shadow-md shadow-red-500/20"
           >
             {isDeleting ? "..." : "Delete"}
-          </button>
+          </Button>
         </div>
       </div>
 
