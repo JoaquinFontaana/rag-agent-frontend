@@ -1,6 +1,6 @@
 import { LANGGRAPH_API_URL } from "@/consts";
 import { ActiveThread, MyUIMessage } from "@/types/types";
-import { LangSmithDeploymentTransport } from "@ai-sdk/langchain";
+import { LangGraphStatefulTransport } from "@/lib/LangGraphStatefulTransport";
 import { useChat } from "@ai-sdk/react";
 import { useMemo, useState } from "react";
 import { chatService } from "@/services/chatService";
@@ -19,10 +19,10 @@ export default function Conversation({ threadData, userId }: ConversationProps) 
     const [input, setInput] = useState<string>('');
     const [isNew, setIsNew] = useState(isInitiallyNew);
 
-    const transport = useMemo(() => new LangSmithDeploymentTransport({
-        url: LANGGRAPH_API_URL,
-        graphId: "agent",
-    }), []);
+    const transport = useMemo(() => new LangGraphStatefulTransport(
+        LANGGRAPH_API_URL,
+        id  // thread ID for stateful persistence
+    ), [id]);
 
     const { messages, error, clearError, sendMessage, stop, status } = useChat<MyUIMessage>({
         transport,
