@@ -57,13 +57,13 @@ export default function DocumentItem({ document, onDelete }: DocumentItemProps) 
   }
 
   return (
-    <div className="border border-gray-200 rounded-lg p-4 bg-white">
+    <div className="border border-gray-700 rounded-lg p-4 bg-gray-800/50 hover:bg-gray-800 transition-colors">
       <div className="flex items-start justify-between gap-4">
         <div className="flex-1 min-w-0">
-          <h3 className="font-medium text-gray-900 truncate">
+          <h3 className="font-medium text-white truncate">
             {document.filename}
           </h3>
-          <div className="mt-1 text-sm text-gray-500 space-y-1">
+          <div className="mt-1 text-sm text-gray-400 space-y-1">
             <p>Chunks: {document.total_chunks}</p>
             <p>Uploaded: {formatDate(document.uploaded_at)}</p>
           </div>
@@ -73,7 +73,7 @@ export default function DocumentItem({ document, onDelete }: DocumentItemProps) 
           <button
             onClick={handleViewChunks}
             disabled={isLoadingChunks}
-            className="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
+            className="px-3 py-1 text-sm bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white rounded transition-all disabled:opacity-50 shadow-md shadow-blue-500/20"
           >
             {(() => {
               if (isLoadingChunks) return "...";
@@ -83,7 +83,7 @@ export default function DocumentItem({ document, onDelete }: DocumentItemProps) 
           <button
             onClick={handleDelete}
             disabled={isDeleting}
-            className="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600 disabled:opacity-50"
+            className="px-3 py-1 text-sm bg-red-600 hover:bg-red-500 text-white rounded transition-all disabled:opacity-50 shadow-md shadow-red-500/20"
           >
             {isDeleting ? "..." : "Delete"}
           </button>
@@ -95,12 +95,12 @@ export default function DocumentItem({ document, onDelete }: DocumentItemProps) 
           {chunks.map((chunk) => (
             <div
               key={chunk.id}
-              className="p-3 bg-gray-50 rounded border border-gray-200"
+              className="p-3 bg-gray-900/50 rounded border border-gray-700"
             >
               <div className="text-xs text-gray-500 mb-1">
                 Chunk {chunk.metadata.chunk_index + 1} of {chunk.metadata.total_chunks}
               </div>
-              <p className="text-sm text-gray-700 line-clamp-3">
+              <p className="text-sm text-gray-300 line-clamp-3">
                 {chunk.content}
               </p>
             </div>

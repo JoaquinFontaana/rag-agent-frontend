@@ -28,26 +28,17 @@ export default function DocumentsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900">
+    <div className="min-h-screen bg-gray-950">
       <div className="max-w-5xl mx-auto px-4 py-8">
-        <div className="mb-6 flex items-center justify-between">
+        <div className="mb-6 flex items-center justify-center">
           <div>
-            <h1 className="text-3xl font-bold text-white">Document Management</h1>
+            <h1 className="text-3xl font-bold text-white text-center">Document Management</h1>
             <p className="mt-2 text-gray-400">
               Upload and manage documents for your RAG agent
             </p>
           </div>
-          <button
-            onClick={() => router.push("/chat")}
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
-          >
-            Go to Chat
-          </button>
         </div>
-
-        <div className="bg-white rounded-lg shadow-lg overflow-hidden" style={{ height: "calc(100vh - 200px)" }}>
-          <DocumentList />
-        </div>
+        <DocumentList />
       </div>
     </div>
   )

@@ -76,8 +76,8 @@ export default function DocumentUpload({ onUploadSuccess }: DocumentUploadProps)
         onClick={() => fileInputRef.current?.click()}
         className={`
           border-2 border-dashed rounded-lg p-8 text-center cursor-pointer w-full
-          transition-colors
-          ${isDragging ? "border-blue-500 bg-blue-50" : "border-gray-300 hover:border-gray-400"}
+          transition-all
+          ${isDragging ? "border-blue-500 bg-blue-500/10" : "border-gray-600 hover:border-blue-500/50 hover:bg-gray-800/50"}
           ${isUploading ? "opacity-50 pointer-events-none" : ""}
         `}
       >
@@ -88,16 +88,16 @@ export default function DocumentUpload({ onUploadSuccess }: DocumentUploadProps)
           onChange={handleFileSelect}
           className="hidden"
         />
-        
+
         <div className="space-y-2">
           {isUploading ? (
-            <p className="text-gray-600">Uploading...</p>
+            <p className="text-gray-300">Uploading...</p>
           ) : (
             <>
-              <p className="text-gray-700 font-medium">
+              <p className="text-gray-200 font-medium">
                 Drop a file here or click to browse
               </p>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-gray-400">
                 Supports PDF and TXT files
               </p>
             </>
@@ -106,8 +106,8 @@ export default function DocumentUpload({ onUploadSuccess }: DocumentUploadProps)
       </button>
 
       {error && (
-        <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-          <p className="text-sm text-red-600">{error}</p>
+        <div className="mt-4 p-3 bg-red-900/20 border border-red-500/50 rounded-lg">
+          <p className="text-sm text-red-400">{error}</p>
         </div>
       )}
     </div>

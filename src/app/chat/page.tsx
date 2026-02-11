@@ -148,7 +148,7 @@ export default function Chat() {
     }
 
     return (
-        <div className="flex h-screen bg-gray-950 relative">
+        <div className="flex h-screen bg-gray-950 relative overflow-hidden">
             {/* Hamburger Menu Button */}
             <Button
                 variant="icon"

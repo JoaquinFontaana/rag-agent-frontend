@@ -1,5 +1,4 @@
 import { LangSmithDeploymentTransport, toUIMessageStream } from '@ai-sdk/langchain';
-import { Client } from '@langchain/langgraph-sdk';
 import type { UIMessage, UIMessageChunk, ChatRequestOptions } from 'ai';
 
 /**
@@ -8,15 +7,11 @@ import type { UIMessage, UIMessageChunk, ChatRequestOptions } from 'ai';
  * This ensures messages are persisted to the thread state.
  */
 export class LangGraphStatefulTransport<UI_MESSAGE extends UIMessage> extends LangSmithDeploymentTransport<UI_MESSAGE> {
-    private client: Client;
     private threadId: string;
 
-    constructor(apiUrl: string, threadId: string) {
+    constructor(apiUrl: string, threadId: string, graphId: string = "agent") {
         // Call parent constructor with graph configuration
-        super({ url: apiUrl, graphId: "agent" });
-
-        // Create LangGraph client for stateful operations
-        this.client = new Client({ apiUrl });
+        super({ url: apiUrl, graphId: graphId });
         this.threadId = threadId;
     }
 

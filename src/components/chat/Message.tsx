@@ -15,13 +15,13 @@ export default function Message({ message }: MessageProps) {
       .join("") || "";
 
   return (
-    <div className={`flex w-full gap-3 py-4 ${isUser ? "bg-transparent" : "bg-gray-900/50"}`}>
+    <div className={`flex w-full gap-3 py-4 ${isUser ? "bg-transparent" : "bg-gray-900/50 rounded-lg"}`}>
       <div className="max-w-3xl mx-auto w-full px-4 flex gap-4">
         {/* Avatar Circle */}
         <div
           className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${isUser
-              ? "bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg shadow-blue-500/30"
-              : "bg-gradient-to-br from-purple-500 to-purple-600 shadow-lg shadow-purple-500/30"
+            ? "bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg shadow-blue-500/30"
+            : "bg-gradient-to-br from-purple-500 to-purple-600 shadow-lg shadow-purple-500/30"
             }`}
         >
           {isUser ? <User size={16} className="text-white" /> : <Bot size={16} className="text-white" />}
