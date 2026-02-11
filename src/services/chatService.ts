@@ -1,9 +1,10 @@
 import { Client } from "@langchain/langgraph-sdk";
 import type { Thread as LangGraphThread} from "@langchain/langgraph-sdk";
 import {
-  MessageChunk,
   ContentPart,
-  Thread
+  Thread,
+  MyUIMessage,
+  Metadata
 }
 from "@/types/types"
 import {LANGGRAPH_API_URL} from "@/consts"
@@ -17,8 +18,20 @@ class ChatService {
     });
   }
 
+  // Map LangGraph message type to UIMessage role
+  private mapMessageTypeToRole(type: string): 'user' | 'assistant' | 'system' {
+    switch (type) {
+      case 'human':
+        return 'user';
+      case 'ai':
+        return 'assistant';
+      default:
+        return 'system';
+    }
+  }
+
   // Generate a title from the first user message
-  private generateTitle(firstMessage: string): string {
+  generateTitle(firstMessage: string): string {
     const maxLength = 50
     const cleaned = firstMessage.trim().replaceAll(/\s+/g, ' ')
     
@@ -30,14 +43,13 @@ class ChatService {
   }
 
   async createThread(userId: string): Promise<string> {
-    const thread = await this.client.threads.create({
+    const response = await this.client.threads.create({
       metadata: {
         userId: userId,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      }
+      },
     });
-    return thread.thread_id;
+
+    return response.thread_id;
   }
 
   async getUserThreads(userId: string): Promise<Thread[]> {
@@ -56,8 +68,8 @@ class ChatService {
       }));
       
       return mapped.sort((a, b) => {
-        const timeA = a.metadata?.updatedAt || a.metadata?.createdAt || ''
-        const timeB = b.metadata?.updatedAt || b.metadata?.createdAt || ''
+        const timeA = a.updated_at || a.created_at || ''
+        const timeB = b.updated_at || b.created_at || ''
         return timeB.localeCompare(timeA)
       })
     } catch (error) {
@@ -73,7 +85,6 @@ class ChatService {
         metadata: {
           ...currentState.metadata,
           title,
-          updatedAt: new Date().toISOString()
         }
       })
     } catch (error) {
@@ -91,51 +102,38 @@ class ChatService {
     }
   }
 
-  async *streamMessage(
-    threadId: string,
-    content: string,
-    assistantId: string = "agent",
-    isFirstMessage: boolean = false
-  ): AsyncGenerator<string, void, unknown> {
-    const streamResponse = this.client.runs.stream(threadId, assistantId, {
-      input: { 'messages':[content] },
-      streamMode: "messages",
-    });
-    for await (const chunk of streamResponse) {
-      if (chunk.event !== "messages/partial") continue;
-      
-      const messageChunks = chunk.data as MessageChunk[];
-      const lastMessage = messageChunks?.at(-1);
-      
-      if (lastMessage?.type === "ai" && lastMessage.content) {
-        const text = typeof lastMessage.content === "string"
-          ? lastMessage.content
-          : (lastMessage.content as unknown as ContentPart[]).map((c) => c.text || "").join("");
-        
-        yield text;
-      }
-    }
-
-    // Auto-generate title for first message
-    if (isFirstMessage) {
-      try {
-        const title = this.generateTitle(content)
-        await this.updateThreadTitle(threadId, title)
-      } catch (error) {
-        console.error('Error auto-generating title:', error)
-      }
-    }
-  }
-
   async getThreadState(threadId: string) {
     return await this.client.threads.getState(threadId);
   }
 
-  async getThreadMessages(threadId: string): Promise<Array<{type: string; content: string | ContentPart[]}>> {
+  async getThreadMessages(threadId: string): Promise<MyUIMessage[]> {
     try {
       const state = await this.client.threads.getState(threadId);
       const values = state.values as { messages?: Array<{type: string; content: string | ContentPart[]}> };
-      return values?.messages || [];
+      const messages = values?.messages || [];
+      
+      const metadata: Metadata = {
+        userId: (state.metadata as any)?.userId || ''
+      };
+      
+      // Transform LangGraph messages to MyUIMessage format
+      return messages.map((msg, index) => {
+        const role = this.mapMessageTypeToRole(msg.type);
+        
+        const parts = typeof msg.content === 'string' 
+          ? [{ type: 'text' as const, text: msg.content }]
+          : (msg.content).map(part => ({ 
+              type: 'text' as const, 
+              text: part.text || '' 
+            }));
+
+        return {
+          id: `${threadId}-${index}`,
+          role,
+          parts,
+          metadata
+        };
+      });
     } catch (error) {
       console.error('Error fetching thread messages:', error);
       return [];

@@ -1,3 +1,4 @@
+import { UIMessage } from "ai"
 export interface User{
     id:number
     email:string
@@ -8,23 +9,6 @@ export interface Response{
     detail:string
     ok:boolean
 }
-
-export interface Message {
-  id: string;
-  role: "user" | "assistant";
-  content: string;
-}
-
-export interface StreamChunk {
-  event: string;
-  data: MessageChunk[];
-}
-
-export interface MessageChunk {
-  type: string;
-  content: string | ContentPart[];
-}
-
 export interface ContentPart {
   text?: string;
 }
@@ -88,25 +72,24 @@ export interface UploadDocumentResponse {
   document_id: string
 }
 
-export interface ListDocumentsResponse {
-  documents: Document[]
-}
-
-export interface DocumentChunksResponse {
-  chunks: DocumentChunk[]
-}
 
 // Thread types
 export interface Thread {
   thread_id: string
   created_at: string
   updated_at?: string
-  title?: string
-  metadata?: {
-    userId: string
-    title?: string
-    createdAt: string
-    updatedAt?: string
-  }
-  values?: any
+  metadata?: Metadata
+  values?: unknown
+}
+
+export interface Metadata {
+    userId: string;
+}
+
+export type MyUIMessage = UIMessage<Metadata>;
+
+export interface ActiveThread{
+    id: string;
+    messages: MyUIMessage[];
+    newConversation:boolean
 }
