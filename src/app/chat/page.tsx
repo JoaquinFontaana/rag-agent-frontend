@@ -4,21 +4,22 @@ import { useAuth } from "@/context/AuthContext";
 import { chatService } from "@/services/chatService";
 import { ActiveThread, Thread } from "@/types/types";
 import { useEffect, useState } from "react";
-
+import { useRouter } from "next/router";
 export default function Chat() {
     const {isAuthenticated,user} = useAuth()
     const [threads,setThreads] = useState<Thread[]>([])
-    
     const [activeThread, setActiveThread] = useState<ActiveThread | null>(null);
     const [isLoading,setIsLoading] = useState(false)
 
+    const router = useRouter()
+
+
     useEffect(()=>{
         if (!user || !isAuthenticated){
+            router.push('/login');
             return
-            //TODO redirect to login
         }
-        
-       const initChat = async () => {
+        const initChat = async () => {
             setIsLoading(true);
             try {
                 // 1. Fetch Threads
@@ -71,12 +72,34 @@ export default function Chat() {
             setIsLoading(false);
         }
     }
-    
+    const handleNewChat = async () => {
+        setIsLoading(true);
+        try {
+            if(!user) return
+            // Create new thread on the server immediately
+            const newId = await chatService.createThread(user.id.toString());
+            
+            // Refresh thread list
+            const updatedThreads = await chatService.getUserThreads(user.id.toString());
+            setThreads(updatedThreads);
+
+            // Select the new empty thread
+            setActiveThread({
+                id: newId,
+                messages: [],
+                newConversation: true
+            });
+        } catch (e) {
+            console.error(e);
+        } finally {
+            setIsLoading(false);
+        }
+    };
     return(
         <>
         {isAuthenticated && user && activeThread &&(
             <>
-                <ChatList onSelect={handleThreadSelect} threads={threads}></ChatList>
+                <ChatList onNewChat={handleNewChat} activeId={activeThread.id} onSelect={handleThreadSelect} threads={threads}></ChatList>
                 <Conversation key={activeThread.id} threadData={activeThread} userId={user.id}></Conversation>
             </>
         )}
