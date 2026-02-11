@@ -6,22 +6,27 @@ import { chatService } from "@/services/chatService";
 import { ActiveThread, Thread } from "@/types/types";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { Menu } from "lucide-react";
+import Button from "@/components/ui/Button"; // Added import for Button component
+
 export default function Chat() {
-    const {isAuthenticated,user, isLoading:isAuthLoading} = useAuth()
-    const [threads,setThreads] = useState<Thread[]>([])
+    const { isAuthenticated, user, isLoading: isAuthLoading } = useAuth()
+    const [threads, setThreads] = useState<Thread[]>([])
     const [activeThread, setActiveThread] = useState<ActiveThread | null>(null);
-    const [isSwitching,setIsSwitching] = useState(false)
-    const [isInitialLoading,setIsInitialLoading] = useState(true)
+    const [isSwitching, setIsSwitching] = useState(false)
+    const [isInitialLoading, setIsInitialLoading] = useState(true)
+    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const router = useRouter()
+
     useEffect(() => {
-    // Only redirect if we are DONE loading AND not authenticated
-    if (!isAuthLoading && !isAuthenticated) {
-        router.push("/login");
-    }
+        // Only redirect if we are DONE loading AND not authenticated
+        if (!isAuthLoading && !isAuthenticated) {
+            router.push("/login");
+        }
     }, [isAuthLoading, isAuthenticated, router]);
 
-    useEffect(()=>{
-        if (!user || !isAuthenticated){
+    useEffect(() => {
+        if (!user || !isAuthenticated) {
             return
         }
         const initChat = async () => {
@@ -34,18 +39,18 @@ export default function Chat() {
                 if (userThreads.length > 0) {
                     const lastThread = userThreads[0]; // Or find most recent
                     const msgs = await chatService.getThreadMessages(lastThread.thread_id);
-                    
+
                     setActiveThread({
                         id: lastThread.thread_id,
                         messages: msgs,
-                        newConversation:false
+                        newConversation: false
                     });
                 } else {
                     const newId = await chatService.createThread(user.id.toString());
                     setActiveThread({
                         id: newId,
                         messages: [],
-                        newConversation:true
+                        newConversation: true
                     });
                 }
             } catch (error) {
@@ -56,11 +61,11 @@ export default function Chat() {
         };
 
         initChat();
-    },[user, isAuthenticated])
+    }, [user, isAuthenticated])
 
     if (!isAuthenticated || !user) {
-    return null; 
-    } 
+        return null;
+    }
 
     const handleThreadSelect = async (threadId: string) => {
         // Optimization: Don't reload if already active
@@ -80,13 +85,14 @@ export default function Chat() {
             setIsSwitching(false);
         }
     }
+
     const handleNewChat = async () => {
         setIsSwitching(true);
         try {
-            if(!user) return
+            if (!user) return
             // Create new thread on the server immediately
             const newId = await chatService.createThread(user.id.toString());
-            
+
             // Refresh thread list
             const updatedThreads = await chatService.getUserThreads(user.id.toString());
             setThreads(updatedThreads);
@@ -103,21 +109,67 @@ export default function Chat() {
             setIsSwitching(false);
         }
     };
+
+    const handleDeleteThread = async (threadId: string) => {
+        try {
+            await chatService.deleteThread(threadId);
+
+            // Update local thread list
+            const updatedThreads = threads.filter(t => t.thread_id !== threadId);
+            setThreads(updatedThreads);
+
+            // If we deleted the active thread, switch to another or create new
+            if (activeThread?.id === threadId) {
+                if (updatedThreads.length > 0) {
+                    const newActiveThread = updatedThreads[0];
+                    const msgs = await chatService.getThreadMessages(newActiveThread.thread_id);
+                    setActiveThread({
+                        id: newActiveThread.thread_id,
+                        messages: msgs,
+                        newConversation: false
+                    });
+                } else {
+                    // No threads left, create a new one
+                    await handleNewChat();
+                }
+            }
+        } catch (error) {
+            console.error("Failed to delete thread:", error);
+        }
+    };
+
     if (isInitialLoading) {
         return (
-                <div className="flex h-screen items-center justify-center bg-gray-950">
+            <div className="flex h-screen items-center justify-center bg-gray-950">
                 {/* Ensure this background matches your app theme to avoid white flash */}
                 <div className="animate-spin text-blue-600">...</div>
-                </div>
+            </div>
         )
     }
 
-    return(
-        <div className="flex h-screen bg-gray-950 ">
-            {isAuthenticated && user && activeThread &&(
+    return (
+        <div className="flex h-screen bg-gray-950 relative">
+            {/* Hamburger Menu Button */}
+            <Button
+                variant="icon"
+                onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                icon={<Menu size={20} />}
+                className="fixed top-4 left-4 z-50 lg:hidden"
+                title="Toggle sidebar"
+            />
+
+            {isAuthenticated && user && activeThread && (
                 <>
-                    <ChatList onNewChat={handleNewChat} activeId={activeThread.id} onSelect={handleThreadSelect} threads={threads}></ChatList>
-                    <Conversation key={activeThread.id} threadData={activeThread} userId={user.id}></Conversation>
+                    <ChatList
+                        onNewThread={handleNewChat}
+                        activeThreadId={activeThread.id}
+                        onThreadSelect={handleThreadSelect}
+                        threads={threads}
+                        onDelete={handleDeleteThread}
+                        isOpen={isSidebarOpen}
+                        onToggle={() => setIsSidebarOpen(!isSidebarOpen)}
+                    />
+                    <Conversation key={activeThread.id} threadData={activeThread} userId={user.id} />
                 </>
             )}
         </div>
