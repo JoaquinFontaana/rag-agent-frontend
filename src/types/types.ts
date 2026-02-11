@@ -83,7 +83,8 @@ export interface Thread {
 }
 
 export interface Metadata {
-    userId: string;
+  userId: string;
+  title?:string
 }
 
 export type MyUIMessage = UIMessage<Metadata>;

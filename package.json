@@ -11,10 +11,12 @@
   "dependencies": {
     "@ai-sdk/langchain": "^2.0.83",
     "@ai-sdk/react": "^3.0.80",
+    "@langchain/langgraph": "^1.1.4",
     "@langchain/langgraph-sdk": "^1.5.5",
     "ai": "^6.0.78",
     "axios": "^1.13.4",
     "jwt-decode": "^4.0.0",
+    "lucide-react": "^0.563.0",
     "next": "16.1.6",
     "react": "19.2.3",
     "react-dom": "19.2.3"

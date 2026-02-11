@@ -1,26 +1,30 @@
+'use client'
 import ChatList from "@/components/chat/ChatList";
 import Conversation from "@/components/chat/Conversation";
 import { useAuth } from "@/context/AuthContext";
 import { chatService } from "@/services/chatService";
 import { ActiveThread, Thread } from "@/types/types";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 export default function Chat() {
-    const {isAuthenticated,user} = useAuth()
+    const {isAuthenticated,user, isLoading:isAuthLoading} = useAuth()
     const [threads,setThreads] = useState<Thread[]>([])
     const [activeThread, setActiveThread] = useState<ActiveThread | null>(null);
-    const [isLoading,setIsLoading] = useState(false)
-
+    const [isSwitching,setIsSwitching] = useState(false)
+    const [isInitialLoading,setIsInitialLoading] = useState(true)
     const router = useRouter()
-
+    useEffect(() => {
+    // Only redirect if we are DONE loading AND not authenticated
+    if (!isAuthLoading && !isAuthenticated) {
+        router.push("/login");
+    }
+    }, [isAuthLoading, isAuthenticated, router]);
 
     useEffect(()=>{
         if (!user || !isAuthenticated){
-            router.push('/login');
             return
         }
         const initChat = async () => {
-            setIsLoading(true);
             try {
                 // 1. Fetch Threads
                 const userThreads = await chatService.getUserThreads(user.id.toString());
@@ -47,18 +51,22 @@ export default function Chat() {
             } catch (error) {
                 console.error("Failed to init chat", error);
             } finally {
-                setIsLoading(false);
+                setIsInitialLoading(false);
             }
         };
 
         initChat();
     },[user, isAuthenticated])
 
+    if (!isAuthenticated || !user) {
+    return null; 
+    } 
+
     const handleThreadSelect = async (threadId: string) => {
         // Optimization: Don't reload if already active
         if (activeThread?.id === threadId) return;
 
-        setIsLoading(true);
+        setIsSwitching(true);
         try {
             const msgs = await chatService.getThreadMessages(threadId);
             setActiveThread({
@@ -69,11 +77,11 @@ export default function Chat() {
         } catch (error) {
             console.error(error);
         } finally {
-            setIsLoading(false);
+            setIsSwitching(false);
         }
     }
     const handleNewChat = async () => {
-        setIsLoading(true);
+        setIsSwitching(true);
         try {
             if(!user) return
             // Create new thread on the server immediately
@@ -92,17 +100,26 @@ export default function Chat() {
         } catch (e) {
             console.error(e);
         } finally {
-            setIsLoading(false);
+            setIsSwitching(false);
         }
     };
+    if (isInitialLoading) {
+        return (
+                <div className="flex h-screen items-center justify-center bg-gray-950">
+                {/* Ensure this background matches your app theme to avoid white flash */}
+                <div className="animate-spin text-blue-600">...</div>
+                </div>
+        )
+    }
+
     return(
-        <>
-        {isAuthenticated && user && activeThread &&(
-            <>
-                <ChatList onNewChat={handleNewChat} activeId={activeThread.id} onSelect={handleThreadSelect} threads={threads}></ChatList>
-                <Conversation key={activeThread.id} threadData={activeThread} userId={user.id}></Conversation>
-            </>
-        )}
-        </>
+        <div className="flex h-screen bg-gray-950 ">
+            {isAuthenticated && user && activeThread &&(
+                <>
+                    <ChatList onNewChat={handleNewChat} activeId={activeThread.id} onSelect={handleThreadSelect} threads={threads}></ChatList>
+                    <Conversation key={activeThread.id} threadData={activeThread} userId={user.id}></Conversation>
+                </>
+            )}
+        </div>
     )
 }
