@@ -1,7 +1,10 @@
-import { MessageSquare, Plus, Trash2, X } from "lucide-react";
-import { useState, useEffect } from "react";
+"use client"
+
+import { useState } from "react";
+import { MessageSquare, Plus, X, Trash2 } from "lucide-react";
 import { Thread } from "@/types/types";
 import Button from "../ui/Button";
+import ConfirmModal from "../ui/ConfirmModal";
 
 interface ChatListProps {
     readonly threads: Thread[];
@@ -15,21 +18,23 @@ interface ChatListProps {
 
 export default function ChatList({ threads, activeThreadId, onThreadSelect, onNewThread, onDelete, isOpen, onToggle }: ChatListProps) {
     const [deletingId, setDeletingId] = useState<string | null>(null);
+    const [deleteConfirm, setDeleteConfirm] = useState<{ show: boolean; threadId: string; title: string }>({ show: false, threadId: "", title: "" });
 
-    useEffect(() => {
-        if (deletingId) {
-            const timeout = setTimeout(() => setDeletingId(null), 3000);
-            return () => clearTimeout(timeout);
-        }
-    }, [deletingId]);
+    const handleDeleteClick = (e: React.MouseEvent, threadId: string, title: string) => {
+        e.stopPropagation(); // Don't trigger thread selection
+        setDeleteConfirm({ show: true, threadId, title });
+    };
 
-    const handleDelete = (e: React.MouseEvent, threadId: string) => {
-        e.stopPropagation();
-        if (deletingId === threadId) {
-            onDelete(threadId);
+    const handleDeleteConfirm = async () => {
+        const threadId = deleteConfirm.threadId;
+        setDeleteConfirm({ show: false, threadId: "", title: "" });
+        setDeletingId(threadId);
+        try {
+            await onDelete(threadId);
+        } catch (error) {
+            console.error('Failed to delete thread:', error);
+        } finally {
             setDeletingId(null);
-        } else {
-            setDeletingId(threadId);
         }
     };
 
@@ -97,18 +102,26 @@ export default function ChatList({ threads, activeThreadId, onThreadSelect, onNe
                             <Button
                                 variant={deletingId === thread.thread_id ? "danger" : "icon"}
                                 size="sm"
-                                onClick={(e) => handleDelete(e, thread.thread_id)}
+                                onClick={(e) => handleDeleteClick(e, thread.thread_id, thread.metadata?.title || "New conversation")}
                                 icon={<Trash2 size={14} />}
-                                className={`
-                                    opacity-0 group-hover:opacity-100 transition-opacity
-                                    ${deletingId === thread.thread_id ? 'opacity-100' : ''}
-                                `}
-                                title={deletingId === thread.thread_id ? "Click again to confirm" : "Delete chat"}
+                                className="opacity-0 group-hover:opacity-100"
+                                disabled={deletingId === thread.thread_id}
                             />
                         </div>
                     ))}
                 </div>
             </div>
+
+            {/* Confirmation Modal */}
+            <ConfirmModal
+                isOpen={deleteConfirm.show}
+                title="Delete Conversation"
+                message={`Are you sure you want to delete "${deleteConfirm.title}"? This action cannot be undone.`}
+                confirmText="Delete"
+                cancelText="Cancel"
+                onConfirm={handleDeleteConfirm}
+                onCancel={() => setDeleteConfirm({ show: false, threadId: "", title: "" })}
+            />
         </>
     );
 }

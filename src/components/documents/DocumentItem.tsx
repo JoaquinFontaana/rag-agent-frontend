@@ -3,6 +3,7 @@
 import { useState } from "react"
 import type { Document, DocumentChunk } from "@/types/types"
 import { documentService } from "@/services/documentService"
+import ConfirmModal from "../ui/ConfirmModal"
 
 interface DocumentItemProps {
   readonly document: Document
@@ -14,6 +15,7 @@ export default function DocumentItem({ document, onDelete }: DocumentItemProps) 
   const [chunks, setChunks] = useState<DocumentChunk[]>([])
   const [isLoadingChunks, setIsLoadingChunks] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
 
   const handleViewChunks = async () => {
     if (showChunks) {
@@ -33,9 +35,12 @@ export default function DocumentItem({ document, onDelete }: DocumentItemProps) 
     }
   }
 
-  const handleDelete = async () => {
-    if (!confirm(`Delete "${document.filename}"?`)) return
+  const handleDeleteClick = () => {
+    setShowDeleteConfirm(true)
+  }
 
+  const handleDeleteConfirm = async () => {
+    setShowDeleteConfirm(false)
     setIsDeleting(true)
     try {
       await documentService.deleteDocument(document.document_id)
@@ -81,7 +86,7 @@ export default function DocumentItem({ document, onDelete }: DocumentItemProps) 
             })()}
           </button>
           <button
-            onClick={handleDelete}
+            onClick={handleDeleteClick}
             disabled={isDeleting}
             className="px-3 py-1 text-sm bg-red-600 hover:bg-red-500 text-white rounded transition-all disabled:opacity-50 shadow-md shadow-red-500/20"
           >
@@ -107,6 +112,17 @@ export default function DocumentItem({ document, onDelete }: DocumentItemProps) 
           ))}
         </div>
       )}
+
+      {/* Confirmation Modal */}
+      <ConfirmModal
+        isOpen={showDeleteConfirm}
+        title="Delete Document"
+        message={`Are you sure you want to delete "${document.filename}"? This action cannot be undone.`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        onConfirm={handleDeleteConfirm}
+        onCancel={() => setShowDeleteConfirm(false)}
+      />
     </div>
   )
 }
