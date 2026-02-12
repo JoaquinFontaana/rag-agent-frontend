@@ -5,12 +5,13 @@ import Button from "../ui/Button";
 interface ChatInputProps {
     readonly input: string;
     readonly setInput: (value: string) => void;
-    readonly onSubmit: (e: React.SubmitEvent<HTMLFormElement>) => void;
+    readonly onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
     readonly isStreaming: boolean;
     readonly onStop: () => void;
+    readonly isInterrupted: boolean;
 }
 
-export default function ChatInput({ input, setInput, onSubmit, isStreaming, onStop }: ChatInputProps) {
+export default function ChatInput({ input, setInput, onSubmit, isStreaming, onStop, isInterrupted }: ChatInputProps) {
     const textareaRef = useRef<HTMLTextAreaElement>(null);
 
     // Auto-resize textarea
@@ -40,8 +41,8 @@ export default function ChatInput({ input, setInput, onSubmit, isStreaming, onSt
                             value={input}
                             onChange={e => setInput(e.target.value)}
                             onKeyDown={handleKeyDown}
-                            disabled={isStreaming}
-                            placeholder="Message AI Assistant..."
+                            disabled={isStreaming || isInterrupted}
+                            placeholder={isInterrupted ? "Waiting for human intervention..." : "Message AI Assistant..."}
                             rows={1}
                         />
 
@@ -61,9 +62,9 @@ export default function ChatInput({ input, setInput, onSubmit, isStreaming, onSt
                                 type="submit"
                                 variant="primary"
                                 size="md"
-                                disabled={!input.trim() || isStreaming}
+                                disabled={!input.trim() || isStreaming || isInterrupted}
                                 icon={<Send size={18} />}
-                                title="Send message"
+                                title={isInterrupted ? "Waiting for approval" : "Send message"}
                                 className="flex-shrink-0"
                             />
                         )}

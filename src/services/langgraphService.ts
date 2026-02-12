@@ -1,13 +1,11 @@
 import { Client } from "@langchain/langgraph-sdk";
-import type { Thread as LangGraphThread} from "@langchain/langgraph-sdk";
+import type { Thread as LangGraphThread } from "@langchain/langgraph-sdk";
 import {
-  ContentPart,
   Thread,
-  MyUIMessage,
   Metadata
 }
-from "@/types/types"
-import {LANGGRAPH_API_URL} from "@/consts"
+  from "@/types/types"
+import { LANGGRAPH_API_URL } from "@/consts"
 
 class ChatService {
   private readonly client: Client;
@@ -18,27 +16,16 @@ class ChatService {
     });
   }
 
-  // Map LangGraph message type to UIMessage role
-  private mapMessageTypeToRole(type: string): 'user' | 'assistant' | 'system' {
-    switch (type) {
-      case 'human':
-        return 'user';
-      case 'ai':
-        return 'assistant';
-      default:
-        return 'system';
-    }
-  }
 
   // Generate a title from the first user message
   generateTitle(firstMessage: string): string {
     const maxLength = 50
     const cleaned = firstMessage.trim().replaceAll(/\s+/g, ' ')
-    
+
     if (cleaned.length <= maxLength) {
       return cleaned
     }
-    
+
     return cleaned.substring(0, maxLength - 3) + '...'
   }
 
@@ -57,7 +44,7 @@ class ChatService {
       const threads = await this.client.threads.search({
         metadata: { userId }
       });
-      
+
       // Sort by updated time (most recent first)
       const mapped: Thread[] = threads.map((t: LangGraphThread) => ({
         thread_id: t.thread_id,
@@ -66,7 +53,7 @@ class ChatService {
         metadata: t.metadata as Thread['metadata'],
         values: t.values
       }));
-      
+
       return mapped.sort((a, b) => {
         const timeA = a.updated_at || a.created_at || ''
         const timeB = b.updated_at || b.created_at || ''
@@ -106,39 +93,9 @@ class ChatService {
     return await this.client.threads.getState(threadId);
   }
 
-  async getThreadMessages(threadId: string): Promise<MyUIMessage[]> {
-    try {
-      const state = await this.client.threads.getState(threadId);
-      const values = state.values as { messages?: Array<{type: string; content: string | ContentPart[]}> };
-      const messages = values?.messages || [];
-      
-      const metadata: Metadata = {
-        userId: (state.metadata as any)?.userId || ''
-      };
-      
-      // Transform LangGraph messages to MyUIMessage format
-      return messages.map((msg, index) => {
-        const role = this.mapMessageTypeToRole(msg.type);
-        
-        const parts = typeof msg.content === 'string' 
-          ? [{ type: 'text' as const, text: msg.content }]
-          : (msg.content).map(part => ({ 
-              type: 'text' as const, 
-              text: part.text || '' 
-            }));
+  async getInterruptsThreads() {
 
-        return {
-          id: `${threadId}-${index}`,
-          role,
-          parts,
-          metadata
-        };
-      });
-    } catch (error) {
-      console.error('Error fetching thread messages:', error);
-      return [];
-    }
   }
 }
 
-export const chatService = new ChatService();
+export const langgraphService = new ChatService();

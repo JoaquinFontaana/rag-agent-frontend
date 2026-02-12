@@ -2,7 +2,7 @@
 import ChatList from "@/components/chat/ChatList";
 import Conversation from "@/components/chat/Conversation";
 import { useAuth } from "@/context/AuthContext";
-import { chatService } from "@/services/chatService";
+import { langgraphService } from "@/services/langgraphService";
 import { ActiveThread, Thread } from "@/types/types";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -32,24 +32,21 @@ export default function Chat() {
         const initChat = async () => {
             try {
                 // 1. Fetch Threads
-                const userThreads = await chatService.getUserThreads(user.id.toString());
+                const userThreads = await langgraphService.getUserThreads(user.id.toString());
                 setThreads(userThreads);
 
                 // 2. Decide: Load Existing or Create New
                 if (userThreads.length > 0) {
-                    const lastThread = userThreads[0]; // Or find most recent
-                    const msgs = await chatService.getThreadMessages(lastThread.thread_id);
+                    const lastThread = userThreads[0];
 
                     setActiveThread({
                         id: lastThread.thread_id,
-                        messages: msgs,
                         newConversation: false
                     });
                 } else {
-                    const newId = await chatService.createThread(user.id.toString());
+                    const newId = await langgraphService.createThread(user.id.toString());
                     setActiveThread({
                         id: newId,
-                        messages: [],
                         newConversation: true
                     });
                 }
@@ -73,10 +70,8 @@ export default function Chat() {
 
         setIsSwitching(true);
         try {
-            const msgs = await chatService.getThreadMessages(threadId);
             setActiveThread({
                 id: threadId,
-                messages: msgs,
                 newConversation: false
             });
         } catch (error) {
@@ -91,16 +86,15 @@ export default function Chat() {
         try {
             if (!user) return
             // Create new thread on the server immediately
-            const newId = await chatService.createThread(user.id.toString());
+            const newId = await langgraphService.createThread(user.id.toString());
 
             // Refresh thread list
-            const updatedThreads = await chatService.getUserThreads(user.id.toString());
+            const updatedThreads = await langgraphService.getUserThreads(user.id.toString());
             setThreads(updatedThreads);
 
             // Select the new empty thread
             setActiveThread({
                 id: newId,
-                messages: [],
                 newConversation: true
             });
         } catch (e) {
@@ -112,7 +106,7 @@ export default function Chat() {
 
     const handleDeleteThread = async (threadId: string) => {
         try {
-            await chatService.deleteThread(threadId);
+            await langgraphService.deleteThread(threadId);
 
             // Update local thread list
             const updatedThreads = threads.filter(t => t.thread_id !== threadId);
@@ -122,10 +116,8 @@ export default function Chat() {
             if (activeThread?.id === threadId) {
                 if (updatedThreads.length > 0) {
                     const newActiveThread = updatedThreads[0];
-                    const msgs = await chatService.getThreadMessages(newActiveThread.thread_id);
                     setActiveThread({
                         id: newActiveThread.thread_id,
-                        messages: msgs,
                         newConversation: false
                     });
                 } else {
@@ -169,7 +161,7 @@ export default function Chat() {
                         isOpen={isSidebarOpen}
                         onToggle={() => setIsSidebarOpen(!isSidebarOpen)}
                     />
-                    <Conversation key={activeThread.id} threadData={activeThread} userId={user.id} />
+                    <Conversation key={activeThread.id} threadData={activeThread} />
                 </>
             )}
         </div>

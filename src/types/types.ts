@@ -1,25 +1,21 @@
-import { UIMessage } from "ai"
-export interface User{
-    id:number
-    email:string
-    role: "admin" | "user"
+export interface User {
+  id: number
+  email: string
+  role: "admin" | "user"
 }
-export interface Response{
-    statusCode:number
-    detail:string
-    ok:boolean
-}
-export interface ContentPart {
-  text?: string;
+export interface Response {
+  statusCode: number
+  detail: string
+  ok: boolean
 }
 
-export interface LoginCredentials{
-  email:string
-  password:string
+export interface LoginCredentials {
+  email: string
+  password: string
 }
-export interface RegisterCredentials{
-    email:string
-   password:string
+export interface RegisterCredentials {
+  email: string
+  password: string
 }
 
 export interface ApiResponse {
@@ -84,13 +80,11 @@ export interface Thread {
 
 export interface Metadata {
   userId: string;
-  title?:string
+  title?: string
 }
 
-export type MyUIMessage = UIMessage<Metadata>;
 
-export interface ActiveThread{
-    id: string;
-    messages: MyUIMessage[];
-    newConversation:boolean
+export interface ActiveThread {
+  id: string;
+  newConversation: boolean
 }

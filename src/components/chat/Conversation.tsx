@@ -1,69 +1,80 @@
 import { LANGGRAPH_API_URL } from "@/consts";
-import { ActiveThread, MyUIMessage } from "@/types/types";
-import { LangGraphStatefulTransport } from "@/lib/LangGraphStatefulTransport";
-import { useChat } from "@ai-sdk/react";
-import { useMemo, useState } from "react";
-import { chatService } from "@/services/chatService";
+import { ActiveThread } from "@/types/types";
+import { useStream } from "@langchain/langgraph-sdk/react";
+import type { ChatState, ChatBag } from "@/types/stream";
+import { useState } from "react";
+import { langgraphService } from "@/services/langgraphService";
 import ChatInput from "./ChatInput";
 import MessageList from "./MessageList";
 import EmptyState from "./EmptyState";
 
 interface ConversationProps {
-    readonly threadData: ActiveThread
-    readonly userId: number
+    readonly threadData: ActiveThread;
 }
 
-export default function Conversation({ threadData, userId }: ConversationProps) {
-    const { id, newConversation: isInitiallyNew, messages: initialMessages } = threadData
+export default function Conversation({ threadData }: ConversationProps) {
+    const { id, newConversation: isInitiallyNew } = threadData;  // Removed initialMessages
 
     const [input, setInput] = useState<string>('');
     const [isNew, setIsNew] = useState(isInitiallyNew);
 
-    const transport = useMemo(() => new LangGraphStatefulTransport(
-        LANGGRAPH_API_URL,
-        id  // thread ID for stateful persistence
-    ), [id]);
-
-    const { messages, error, clearError, sendMessage, stop, status } = useChat<MyUIMessage>({
-        transport,
-        id: id,
-        messages: initialMessages,
+    // Use useStream instead of useChat
+    const stream = useStream<ChatState, ChatBag>({
+        assistantId: "agent",
+        apiUrl: LANGGRAPH_API_URL,
+        threadId: id,
+        fetchStateHistory: true,  // Fetch all history from thread
     });
 
-    const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if (input.trim() && (status === 'ready' || status === 'error')) {
+
+        if (input.trim() && !stream.isLoading && !stream.interrupt) {
             if (isNew) {
-                const generatedTitle = chatService.generateTitle(input);
-                chatService.updateThreadTitle(id, generatedTitle).catch(console.error);
+                const generatedTitle = langgraphService.generateTitle(input);
+                langgraphService.updateThreadTitle(id, generatedTitle).catch(console.error);
                 setIsNew(false);
             }
-            clearError();
-            sendMessage({
-                text: input,
-                metadata: {
-                    userId: userId.toString()
+
+            // Submit new message using stream.submit()
+            stream.submit(
+                {
+                    messages: [{
+                        type: "human",
+                        content: input
+                    }]
                 }
-            });
+            );
+
             setInput('');
         }
     };
-
-    const isStreaming = status === 'streaming';
 
     return (
         <div className="flex flex-col h-full flex-1 bg-gray-950 animate-fade-in">
             {/* Messages Area - ChatGPT Style Center Aligned */}
             <div className="flex-1 overflow-y-auto">
                 <div className="max-w-3xl mx-auto px-4 py-6">
-                    {messages.length === 0 ? (
+                    {stream.messages.length === 0 ? (
                         <EmptyState />
                     ) : (
                         <MessageList
-                            messages={messages}
-                            isStreaming={isStreaming}
-                            error={error}
+                            messages={stream.messages}
+                            isStreaming={stream.isLoading}
+                            error={undefined}  // No error handling needed - interrupts are separate
                         />
+                    )}
+
+                    {/* Show interrupt UI if graph is paused */}
+                    {stream.interrupt && (
+                        <div className="p-4 bg-yellow-900/20 border border-yellow-700 rounded-lg mt-4">
+                            <p className="text-yellow-200 font-semibold">
+                                Waiting for human intervention
+                            </p>
+                            <p className="text-sm text-yellow-300 mt-1">
+                                {stream.interrupt.value?.reason || stream.interrupt.value?.instruction || 'The agent is waiting for approval to proceed.'}
+                            </p>
+                        </div>
                     )}
                 </div>
             </div>
@@ -73,8 +84,9 @@ export default function Conversation({ threadData, userId }: ConversationProps) 
                 input={input}
                 setInput={setInput}
                 onSubmit={handleSubmit}
-                isStreaming={isStreaming}
-                onStop={stop}
+                isStreaming={stream.isLoading}
+                onStop={stream.stop}
+                isInterrupted={!!stream.interrupt}
             />
         </div>
     );

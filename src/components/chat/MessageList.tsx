@@ -1,10 +1,10 @@
-import { MyUIMessage } from "@/types/types";
-import Message from "./Message";
+import { Message } from "@langchain/langgraph-sdk";
+import MessageComponent from "./Message";
 import ThinkingIndicator from "./ThinkingIndicator";
 import { useRef, useEffect } from "react";
 
 interface MessageListProps {
-    readonly messages: MyUIMessage[];
+    readonly messages: Message[];
     readonly isStreaming: boolean;
     readonly error: Error | undefined;
 }
@@ -20,11 +20,11 @@ export default function MessageList({ messages, isStreaming, error }: MessageLis
     return (
         <div className="space-y-6">
             {messages.map(message => (
-                <Message key={message.id} message={message} />
+                <MessageComponent key={message.id} message={message} />
             ))}
 
-            {/* Thinking Indicator */}
-            {isStreaming && messages[messages.length - 1]?.role !== 'assistant' && (
+            {/* Thinking Indicator - show when streaming and last message is from human */}
+            {isStreaming && messages[messages.length - 1]?.type !== 'ai' && (
                 <ThinkingIndicator />
             )}
 

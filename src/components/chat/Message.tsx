@@ -1,18 +1,16 @@
-import { MyUIMessage } from "@/types/types";
+import { Message as LangGraphMessage } from "@langchain/langgraph-sdk";
 import { Bot, User } from "lucide-react";
 
 interface MessageProps {
-  readonly message: MyUIMessage
+  readonly message: LangGraphMessage;
 }
 export default function Message({ message }: MessageProps) {
-  const isUser = message.role === "user";
+  const isUser = message.type === "human";
 
-  // Extract content safely (Supports simple string or Vercel's 'parts' array)
-  const content =
-    message.parts
-      ?.filter((part) => part.type === "text")
-      .map((part) => part.text)
-      .join("") || "";
+  // LangGraph messages have content as string, not parts[]
+  const content = typeof message.content === 'string'
+    ? message.content
+    : '';
 
   return (
     <div className={`flex w-full gap-3 py-4 ${isUser ? "bg-transparent" : "bg-gray-900/50 rounded-lg"}`}>
