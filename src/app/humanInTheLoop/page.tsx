@@ -95,7 +95,7 @@ export default function HumanInTheLoopPage() {
                         <button
                             onClick={() => fetchInterrupts(true)}
                             disabled={isRefreshing}
-                            className={`p items-center justify-center w-10 h-10 bg-gray-900 hover:bg-gray-800 rounded-lg border border-gray-800 transition-colors ${isRefreshing ? 'animate-spin' : ''}`}
+                            className={`p flex items-center justify-center w-10 h-10 bg-gray-900 hover:bg-gray-800 rounded-lg border border-gray-800 transition-colors ${isRefreshing ? 'animate-spin' : ''}`}
                             title="Refresh"
                         >
                             <RefreshCw className="text-gray-400" size={18} />

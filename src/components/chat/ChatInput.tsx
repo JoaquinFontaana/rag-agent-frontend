@@ -5,7 +5,7 @@ import Button from "../ui/Button";
 interface ChatInputProps {
     readonly input: string;
     readonly setInput: (value: string) => void;
-    readonly onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+    readonly onSubmit: (e: React.SubmitEvent<HTMLFormElement>) => void;
     readonly isStreaming: boolean;
     readonly onStop: () => void;
     readonly isInterrupted: boolean;

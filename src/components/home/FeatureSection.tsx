@@ -22,12 +22,18 @@ const features = [
     description: "Always available to help customers with their inquiries.",
     color: "green" as const,
   },
+  {
+    icon: <Icon path={ICON_PATHS.users} />,
+    title: "Human in the Loop",
+    description: "Complex queries escalate to human agents for expert assistance.",
+    color: "orange" as const,
+  },
 ];
 
 export default function FeatureSection() {
   return (
     <div className="border-t border-gray-800 py-16 px-4">
-      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         {features.map((feature) => (
           <FeatureCard
             key={feature.title}

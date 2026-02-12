@@ -2,7 +2,6 @@ import { Client } from "@langchain/langgraph-sdk";
 import type { Thread as LangGraphThread } from "@langchain/langgraph-sdk";
 import {
   Thread,
-  Metadata
 }
   from "@/types/types"
 import { LANGGRAPH_API_URL } from "@/consts"

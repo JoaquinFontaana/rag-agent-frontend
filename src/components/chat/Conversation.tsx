@@ -2,7 +2,7 @@ import { LANGGRAPH_API_URL } from "@/consts";
 import { ActiveThread } from "@/types/types";
 import { useStream } from "@langchain/langgraph-sdk/react";
 import type { ChatState, ChatBag } from "@/types/stream";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { langgraphService } from "@/services/langgraphService";
 import ChatInput from "./ChatInput";
 import MessageList from "./MessageList";
@@ -17,6 +17,7 @@ export default function Conversation({ threadData }: ConversationProps) {
 
     const [input, setInput] = useState<string>('');
     const [isNew, setIsNew] = useState(isInitiallyNew);
+    const previousMessageCount = useRef<number>(0);
 
     // Use useStream instead of useChat
     const stream = useStream<ChatState, ChatBag>({
@@ -26,7 +27,13 @@ export default function Conversation({ threadData }: ConversationProps) {
         fetchStateHistory: true,  // Fetch all history from thread
     });
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+
+    // Track message count
+    useEffect(() => {
+        previousMessageCount.current = stream.messages.length;
+    }, [stream.messages.length]);
+
+    const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         if (input.trim() && !stream.isLoading && !stream.interrupt) {

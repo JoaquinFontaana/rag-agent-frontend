@@ -4,7 +4,7 @@ interface FeatureCardProps {
   icon: ReactNode;
   title: string;
   description: string;
-  color: "blue" | "purple" | "green";
+  color: "blue" | "purple" | "green" | "orange";
 }
 
 const colorClasses = {
@@ -19,6 +19,10 @@ const colorClasses = {
   green: {
     bg: "bg-green-500/10",
     text: "text-green-500",
+  },
+  orange: {
+    bg: "bg-orange-500/10",
+    text: "text-orange-500",
   },
 };
 
