@@ -93,8 +93,72 @@ class ChatService {
     return await this.client.threads.getState(threadId);
   }
 
-  async getInterruptsThreads() {
 
+  /**
+   * Get all threads that have active interrupts (waiting for human approval)
+   */
+  async getInterruptedThreads(): Promise<Thread[]> {
+    try {
+      // Use status filter to get only interrupted threads - much more efficient!
+      const interruptedThreads = await this.client.threads.search({
+        status: "interrupted",
+        sortBy: "updated_at",
+        sortOrder: "desc"
+      });
+
+      // Map to our Thread type
+      return interruptedThreads.map((t: LangGraphThread) => ({
+        thread_id: t.thread_id,
+        created_at: t.created_at,
+        updated_at: t.updated_at,
+        metadata: t.metadata as Thread['metadata'],
+        values: t.values
+      }));
+    } catch (error) {
+      console.error('Error fetching interrupted threads:', error);
+      return [];
+    }
+  }
+
+  /**
+   * Resume a thread that's paused at an interrupt by updating the state
+   * @param threadId The thread to resume
+   * @param resolve If true, sends "resolve" (ends conversation). If false, sends "continue" (keeps human active)
+   * @param response The admin's response message to the user
+   */
+  async resumeThread(threadId: string, resolve: boolean, response?: string): Promise<void> {
+    try {
+      // Prepare state updates matching backend expectations
+      const stateUpdates = {
+        human_response: response || "Response from administrator.",
+        human_action: resolve ? "resolve" : "continue", // resolve = end, continue = keep active
+        human_active: !resolve // If resolving, human is no longer active
+      };
+
+      // Update the thread state with the admin's decision
+      await this.client.threads.updateState(
+        threadId,
+        {
+          values: stateUpdates
+        }
+      );
+
+      // Trigger the graph to continue execution with updated state
+      await this.client.runs.create(
+        threadId,
+        "agent",
+        {
+          command: {
+            resume: true  // Resume from interrupt point
+          }
+        }
+      );
+
+      console.log(`Thread ${threadId} state updated with action=${stateUpdates.human_action}`);
+    } catch (error) {
+      console.error(`Error resuming thread ${threadId}:`, error);
+      throw error;
+    }
   }
 }
 

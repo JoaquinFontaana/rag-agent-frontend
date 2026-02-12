@@ -1,6 +1,6 @@
 import { ButtonHTMLAttributes, ReactNode } from "react";
 
-type ButtonVariant = "primary" | "secondary" | "danger" | "ghost" | "gradient" | "icon";
+type ButtonVariant = "primary" | "secondary" | "danger" | "success" | "ghost" | "gradient" | "icon";
 type ButtonSize = "sm" | "md" | "lg";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -26,6 +26,7 @@ export default function Button({
     primary: "bg-blue-600 hover:bg-blue-700 disabled:bg-gray-700 text-white shadow-md shadow-blue-600/20 disabled:shadow-none focus:ring-blue-500",
     secondary: "border border-gray-700 text-white bg-gray-800 hover:bg-gray-700 focus:ring-gray-500",
     danger: "bg-red-600 hover:bg-red-700 text-white shadow-md shadow-red-500/20 hover:shadow-red-500/30 focus:ring-red-500",
+    success: "bg-green-600 hover:bg-green-700 text-white shadow-md shadow-green-500/20 hover:shadow-green-500/30 focus:ring-green-500",
     ghost: "text-gray-400 hover:text-white hover:bg-gray-800 focus:ring-gray-500",
     gradient: "bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-lg shadow-blue-500/30 focus:ring-blue-500",
     icon: "bg-transparent hover:bg-gray-800 text-gray-400 hover:text-white focus:ring-gray-600"

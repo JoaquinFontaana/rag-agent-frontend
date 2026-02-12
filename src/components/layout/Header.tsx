@@ -39,7 +39,7 @@ export default function Header() {
                         <>
                             <Link
                                 href="/chat"
-                                className={`text-sm font-medium transition-colors ${pathname === "/chat"
+                                className={`text-md font-medium transition-colors ${pathname === "/chat"
                                     ? "text-blue-400"
                                     : "text-gray-400 hover:text-white"
                                     }`}
@@ -47,15 +47,26 @@ export default function Header() {
                                 Chat
                             </Link>
                             {user.role === "admin" && (
-                                <Link
-                                    href="/documents"
-                                    className={`text-sm font-medium transition-colors ${pathname === "/documents"
-                                        ? "text-blue-400"
-                                        : "text-gray-400 hover:text-white"
-                                        }`}
-                                >
-                                    Documents
-                                </Link>
+                                <>
+                                    <Link
+                                        href="/documents"
+                                        className={`text-md font-medium transition-colors ${pathname === "/documents"
+                                            ? "text-blue-400"
+                                            : "text-gray-400 hover:text-white"
+                                            }`}
+                                    >
+                                        Documents
+                                    </Link>
+                                    <Link
+                                        href="/humanInTheLoop"
+                                        className={`text-md font-medium transition-colors ${pathname === "/humanInTheLoop"
+                                            ? "text-blue-400"
+                                            : "text-gray-400 hover:text-white"
+                                            }`}
+                                    >
+                                        Human Requests
+                                    </Link>
+                                </>
                             )}
                         </>
                     )}
