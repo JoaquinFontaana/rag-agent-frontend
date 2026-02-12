@@ -12,7 +12,7 @@ class ChatService {
 
   constructor() {
     this.client = new Client({
-      apiUrl: LANGGRAPH_API_URL,
+      apiUrl: LANGGRAPH_API_URL
     });
   }
 
@@ -132,24 +132,15 @@ class ChatService {
       const stateUpdates = {
         human_response: response || "Response from administrator.",
         human_action: resolve ? "resolve" : "continue", // resolve = end, continue = keep active
-        human_active: !resolve // If resolving, human is no longer active
       };
-
-      // Update the thread state with the admin's decision
-      await this.client.threads.updateState(
-        threadId,
-        {
-          values: stateUpdates
-        }
-      );
-
+      console.info(stateUpdates)
       // Trigger the graph to continue execution with updated state
       await this.client.runs.create(
         threadId,
         "agent",
         {
           command: {
-            resume: true  // Resume from interrupt point
+            resume: stateUpdates  // Resume from interrupt point
           }
         }
       );
