@@ -4,7 +4,7 @@ A portfolio project showcasing an AI-powered customer service chatbot built with
 
 ## 🎯 Project Overview
 
-This is a demonstration of a modern AI customer service solution that:
+This is a AI customer service solution that:
 - Answers customer inquiries using company documentation
 - Provides 24/7 automated support
 - Retrieves accurate information from uploaded knowledge base documents
@@ -16,7 +16,6 @@ This is a demonstration of a modern AI customer service solution that:
 - 🔐 **User Authentication**: Login and registration system
 - 📄 **Knowledge Base Management**: Admin portal for uploading support documents
 - 🔄 **Real-time Streaming**: Instant responses via LangGraph SDK
-- 🎨 **Modern UI**: Dark theme with responsive design
 
 ## Routes
 
@@ -27,6 +26,7 @@ This is a demonstration of a modern AI customer service solution that:
 | `/login` | Login page | Public |
 | `/register` | Registration page | Public |
 | `/admin/documents` | Document upload management | Admin only |
+| `/admin/humanInTheLoop` | Human in the loop panel | Admin only |
 
 ## Getting Started
 

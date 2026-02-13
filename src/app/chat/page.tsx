@@ -15,8 +15,26 @@ export default function Chat() {
     const [activeThread, setActiveThread] = useState<ActiveThread | null>(null);
     const [isSwitching, setIsSwitching] = useState(false)
     const [isInitialLoading, setIsInitialLoading] = useState(true)
-    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Default closed for mobile
     const router = useRouter()
+
+    // Open sidebar by default on desktop
+    useEffect(() => {
+        const handleResize = () => {
+            if (window.innerWidth >= 1024) { // lg breakpoint
+                setIsSidebarOpen(true);
+            } else {
+                setIsSidebarOpen(false);
+            }
+        };
+
+        // Set initial state
+        handleResize();
+
+        // Listen for resize
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     useEffect(() => {
         // Only redirect if we are DONE loading AND not authenticated
@@ -74,6 +92,10 @@ export default function Chat() {
                 id: threadId,
                 newConversation: false
             });
+            // Close sidebar on mobile after selection
+            if (window.innerWidth < 1024) {
+                setIsSidebarOpen(false);
+            }
         } catch (error) {
             console.error(error);
         } finally {
@@ -97,6 +119,10 @@ export default function Chat() {
                 id: newId,
                 newConversation: true
             });
+            // Close sidebar on mobile after creating new chat
+            if (window.innerWidth < 1024) {
+                setIsSidebarOpen(false);
+            }
         } catch (e) {
             console.error(e);
         } finally {

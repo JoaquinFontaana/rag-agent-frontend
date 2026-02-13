@@ -98,13 +98,13 @@ export default function ChatList({ threads, activeThreadId, onThreadSelect, onNe
                             <MessageSquare size={16} className="flex-shrink-0" />
                             <span className="flex-1 truncate text-sm">{thread.metadata?.title || "New conversation"}</span>
 
-                            {/* Delete Button - appears on hover */}
+                            {/* Delete Button - always visible on mobile, hover on desktop */}
                             <Button
                                 variant={deletingId === thread.thread_id ? "danger" : "icon"}
                                 size="sm"
                                 onClick={(e) => handleDeleteClick(e, thread.thread_id, thread.metadata?.title || "New conversation")}
                                 icon={<Trash2 size={14} />}
-                                className="opacity-0 group-hover:opacity-100"
+                                className="opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity"
                                 disabled={deletingId === thread.thread_id}
                             />
                         </div>

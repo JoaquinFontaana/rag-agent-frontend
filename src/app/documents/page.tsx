@@ -32,11 +32,11 @@ export default function DocumentsPage() {
 
   return (
     <div className="h-full bg-gray-950 overflow-y-auto">
-      <div className="max-w-5xl mx-auto px-4 py-8">
+      <div className="max-w-5xl mx-auto px-4 py-6 sm:py-8">
         <div className="mb-6 flex items-center justify-center">
           <div>
-            <h1 className="text-3xl font-bold text-white text-center">Document Management</h1>
-            <p className="mt-2 text-gray-400">
+            <h1 className="text-2xl sm:text-3xl font-bold text-white text-center">Document Management</h1>
+            <p className="mt-2 text-sm sm:text-base text-gray-400 text-center">
               Upload and manage documents for your RAG agent
             </p>
           </div>

@@ -75,30 +75,30 @@ export default function HumanInTheLoopPage() {
         <div className="h-full bg-gray-950 p-4 sm:p-8 overflow-y-auto">
             <div className="max-w-4xl mx-auto">
                 {/* Header */}
-                <div className="flex items-center justify-between mb-8">
-                    <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center shadow-lg shadow-purple-500/30">
-                            <Shield className="text-white" size={24} />
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-0 mb-6 sm:mb-8">
+                    <div className="flex items-center gap-2 sm:gap-3">
+                        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center shadow-lg shadow-purple-500/30 flex-shrink-0">
+                            <Shield className="text-white" size={20} />
                         </div>
-                        <div>
-                            <h1 className="text-3xl font-bold text-white">Human-in-the-Loop</h1>
-                            <p className="text-gray-400">Review user questions and provide assistance</p>
+                        <div className="min-w-0">
+                            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-white truncate">Human-in-the-Loop</h1>
+                            <p className="text-xs sm:text-sm text-gray-400 hidden sm:block">Review user questions and provide assistance</p>
                         </div>
                     </div>
 
                     {/* Stats & Refresh */}
-                    <div className="flex items-center gap-4">
-                        <div className="px-4 py-2 bg-gray-900 rounded-lg border border-gray-800">
-                            <span className="text-gray-400 text-sm">Pending:</span>
-                            <span className="ml-2 text-white font-bold text-lg">{interrupts.length}</span>
+                    <div className="flex items-center gap-2 sm:gap-4">
+                        <div className="px-3 py-1.5 sm:px-4 sm:py-2 bg-gray-900 rounded-lg border border-gray-800">
+                            <span className="text-gray-400 text-xs sm:text-sm">Pending:</span>
+                            <span className="ml-1 sm:ml-2 text-white font-bold text-base sm:text-lg">{interrupts.length}</span>
                         </div>
                         <button
                             onClick={() => fetchInterrupts(true)}
                             disabled={isRefreshing}
-                            className={`p flex items-center justify-center w-10 h-10 bg-gray-900 hover:bg-gray-800 rounded-lg border border-gray-800 transition-colors ${isRefreshing ? 'animate-spin' : ''}`}
+                            className={`flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 bg-gray-900 hover:bg-gray-800 rounded-lg border border-gray-800 transition-colors ${isRefreshing ? 'animate-spin' : ''}`}
                             title="Refresh"
                         >
-                            <RefreshCw className="text-gray-400" size={18} />
+                            <RefreshCw className="text-gray-400" size={16} />
                         </button>
                     </div>
                 </div>
