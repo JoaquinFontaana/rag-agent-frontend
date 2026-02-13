@@ -132,7 +132,7 @@ export default function Chat() {
 
     if (isInitialLoading) {
         return (
-            <div className="flex h-screen items-center justify-center bg-gray-950">
+            <div className="flex h-full items-center justify-center bg-gray-950">
                 {/* Ensure this background matches your app theme to avoid white flash */}
                 <div className="animate-spin text-blue-600">...</div>
             </div>
@@ -140,13 +140,13 @@ export default function Chat() {
     }
 
     return (
-        <div className="flex h-screen bg-gray-950 relative overflow-hidden">
-            {/* Hamburger Menu Button */}
+        <div className="flex h-full bg-gray-950 relative overflow-hidden">
+            {/* Hamburger Menu Button - positioned better for mobile */}
             <Button
                 variant="icon"
                 onClick={() => setIsSidebarOpen(!isSidebarOpen)}
                 icon={<Menu size={20} />}
-                className="fixed top-4 left-4 z-50 lg:hidden"
+                className="fixed top-20 left-2 z-50 lg:hidden bg-gray-800"
                 title="Toggle sidebar"
             />
 

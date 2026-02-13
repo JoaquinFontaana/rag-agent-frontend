@@ -18,7 +18,7 @@ export default function MessageList({ messages, isStreaming, error }: MessageLis
     }, [messages]);
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
             {messages.map(message => (
                 <MessageComponent key={message.id} message={message} />
             ))}
@@ -29,7 +29,7 @@ export default function MessageList({ messages, isStreaming, error }: MessageLis
             )}
 
             {error && (
-                <div className="bg-red-500/10 border border-red-500/50 text-red-400 text-sm px-4 py-3 rounded-lg animate-fade-in">
+                <div className="bg-red-500/10 border border-red-500/50 text-red-400 text-xs sm:text-sm px-3 sm:px-4 py-2 sm:py-3 rounded-lg animate-fade-in">
                     <strong>Error:</strong> {error.message}
                 </div>
             )}

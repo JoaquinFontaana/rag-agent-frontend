@@ -31,10 +31,10 @@ export default function ChatInput({ input, setInput, onSubmit, isStreaming, onSt
 
     return (
         <div className="border-t border-gray-800 bg-gray-950">
-            <div className="max-w-3xl mx-auto px-4 py-4">
+            <div className="max-w-3xl mx-auto px-3 sm:px-4 py-3 sm:py-4">
                 <form onSubmit={onSubmit}>
                     {/* Flex container with styles */}
-                    <div className="flex items-center gap-3 bg-gray-900 rounded-xl p-3 focus-within:ring-2 focus-within:ring-blue-500 transition-all">
+                    <div className="flex items-center gap-2 sm:gap-3 bg-gray-900 rounded-xl p-2 sm:p-3 focus-within:ring-2 focus-within:ring-blue-500 transition-all">
                         <textarea
                             ref={textareaRef}
                             className="flex-1 bg-transparent text-white placeholder-gray-500 focus:outline-none no-resize max-h-[200px] resize-none"
@@ -71,7 +71,7 @@ export default function ChatInput({ input, setInput, onSubmit, isStreaming, onSt
                     </div>
                 </form>
 
-                <p className="text-xs text-gray-500 text-center mt-2">
+                <p className="text-xs text-gray-500 text-center mt-2 hidden sm:block">
                     Press Enter to send, Shift + Enter for new line
                 </p>
             </div>

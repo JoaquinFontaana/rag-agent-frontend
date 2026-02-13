@@ -72,7 +72,7 @@ export default function HumanInTheLoopPage() {
     }
 
     return (
-        <div className="min-h-screen bg-gray-950 p-8">
+        <div className="h-full bg-gray-950 p-4 sm:p-8 overflow-y-auto">
             <div className="max-w-4xl mx-auto">
                 {/* Header */}
                 <div className="flex items-center justify-between mb-8">

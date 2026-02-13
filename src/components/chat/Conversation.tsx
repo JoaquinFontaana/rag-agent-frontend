@@ -58,10 +58,10 @@ export default function Conversation({ threadData }: ConversationProps) {
     };
 
     return (
-        <div className="flex flex-col h-full flex-1 bg-gray-950 animate-fade-in">
+        <div className="flex flex-col h-full w-full bg-gray-950 animate-fade-in overflow-hidden">
             {/* Messages Area - ChatGPT Style Center Aligned */}
-            <div className="flex-1 overflow-y-auto">
-                <div className="max-w-3xl mx-auto px-4 py-6">
+            <div className="flex-1 overflow-y-auto overflow-x-hidden">
+                <div className="max-w-3xl mx-auto px-3 sm:px-4 py-4 sm:py-6">
                     {stream.messages.length === 0 ? (
                         <EmptyState />
                     ) : (
@@ -74,11 +74,11 @@ export default function Conversation({ threadData }: ConversationProps) {
 
                     {/* Show interrupt UI if graph is paused */}
                     {stream.interrupt && (
-                        <div className="p-4 bg-yellow-900/20 border border-yellow-700 rounded-lg mt-4">
-                            <p className="text-yellow-200 font-semibold">
+                        <div className="p-3 sm:p-4 bg-yellow-900/20 border border-yellow-700 rounded-lg mt-4\">
+                            <p className="text-yellow-200 font-semibold text-sm sm:text-base\">
                                 Waiting for human intervention
                             </p>
-                            <p className="text-sm text-yellow-300 mt-1">
+                            <p className="text-xs sm:text-sm text-yellow-300 mt-1">
                                 {stream.interrupt.value?.reason || stream.interrupt.value?.instruction || 'The agent is waiting for approval to proceed.'}
                             </p>
                         </div>

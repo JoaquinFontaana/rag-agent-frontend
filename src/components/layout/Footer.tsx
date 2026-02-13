@@ -3,8 +3,14 @@ export default function Footer() {
 
   return (
     <footer className="border-t border-gray-800 py-6 px-4">
-      <div className="max-w-6xl mx-auto text-center text-gray-500 text-sm">
-        © {currentYear} Customer Service AI · Portfolio Project · Built with Next.js & LangGraph
+      <div className="max-w-6xl mx-auto text-center text-gray-500 text-xs sm:text-sm">
+        <div className="hidden sm:block">
+          © {currentYear} Customer Service AI · Portfolio Project · Built with Next.js & LangGraph
+        </div>
+        <div className="sm:hidden">
+          © {currentYear} Customer Service AI<br />
+          Portfolio Project
+        </div>
       </div>
     </footer>
   );

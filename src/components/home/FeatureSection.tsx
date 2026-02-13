@@ -32,8 +32,8 @@ const features = [
 
 export default function FeatureSection() {
   return (
-    <div className="border-t border-gray-800 py-16 px-4">
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+    <div className="border-t border-gray-800 py-12 sm:py-16 px-4">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
         {features.map((feature) => (
           <FeatureCard
             key={feature.title}

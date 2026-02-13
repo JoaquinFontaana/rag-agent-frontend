@@ -3,7 +3,7 @@ import FeatureSection from "@/components/home/FeatureSection";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gray-950 flex flex-col">
+    <div className="h-full bg-gray-950 flex flex-col overflow-y-auto">
       <Hero />
       <FeatureSection />
     </div>

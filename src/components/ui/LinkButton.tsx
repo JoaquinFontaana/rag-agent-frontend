@@ -22,7 +22,7 @@ export default function LinkButton({
   return (
     <NextLink
       href={href}
-      className={`px-8 py-4 text-white font-semibold rounded-xl transition-colors text-lg ${variants[variant]} ${className}`}
+      className={`px-6 py-3 sm:px-8 sm:py-4 text-white font-semibold rounded-xl transition-colors text-base sm:text-lg ${variants[variant]} ${className}`}
     >
       {children}
     </NextLink>

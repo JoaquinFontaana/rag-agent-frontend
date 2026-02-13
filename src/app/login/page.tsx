@@ -42,14 +42,14 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-950 px-4">
-      <div className="max-w-md w-full space-y-8">
+    <div className="h-full flex items-center justify-center bg-gray-950 px-4 py-8 overflow-y-auto">
+      <div className="max-w-md w-full space-y-6 sm:space-y-8">
         <div className="text-center">
-          <h2 className="text-3xl font-bold text-white">Welcome back</h2>
-          <p className="mt-2 text-gray-400">Sign in to your account</p>
+          <h2 className="text-2xl sm:text-3xl font-bold text-white">Welcome back</h2>
+          <p className="mt-2 text-sm sm:text-base text-gray-400">Sign in to your account</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="mt-8 space-y-6">
+        <form onSubmit={handleSubmit} className="mt-6 sm:mt-8 space-y-4 sm:space-y-6">
           <div className="space-y-4">
             <Input
               label="Email address"
